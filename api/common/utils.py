@@ -1,5 +1,9 @@
-from flask import abort
 from datetime import datetime
+from flask import abort
+import boto3
+from botocore.exceptions import ClientError
+
+client = boto3.client('ssm')
 
 
 def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
@@ -29,10 +33,33 @@ def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
     return links
 
 
-def to_datetime(date: str):
+def to_datetime(date: str) -> datetime:
 
     try:
         date = datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
         abort(404)
     return date
+
+
+def get_pwd() -> str:
+    try:
+        response = client.get_parameter(
+            Name='MONGODB_PWD',
+            WithDecryption=True)
+        pwd = response['Parameter']['Value']
+    except ClientError as error:
+        print(error.response['Error']['Code'])
+        raise
+    return pwd
+
+
+def get_username() -> str:
+    try:
+        response = client.get_parameter(
+            Name='MONGODB_USERNAME')
+        username = response['Parameter']['Value']
+    except ClientError as error:
+        print(error.response['Error']['Code'])
+        raise
+    return username

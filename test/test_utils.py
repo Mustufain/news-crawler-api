@@ -1,7 +1,8 @@
 import unittest
-from common.utils import get_paginated_list
+from datetime import datetime
 from nose.tools import raises
 from werkzeug.exceptions import HTTPException
+from api.common.utils import get_paginated_list, to_datetime
 
 
 class Utils(unittest.TestCase):
@@ -9,6 +10,8 @@ class Utils(unittest.TestCase):
     def setUp(self) -> None:
         self.endpoint = "/news?start={start}&limit={limit}"
         self.url = "foo/news"
+        self.date = '2020-01-01'
+        self.invalid_date = '2021-02-29'
 
     @raises(HTTPException)
     def test_http_404_error(self):
@@ -50,3 +53,17 @@ class Utils(unittest.TestCase):
                                                         start=1))
         self.assertEqual(next_url, self.endpoint.format(limit=20,
                                                         start=25))
+
+    def test_to_datetime(self):
+        date = to_datetime(self.date)
+        self.assertEqual(date, datetime(2020, 1, 1))
+
+    @raises(HTTPException)
+    def test_to_datetime_404_error(self):
+        to_datetime(self.invalid_date)
+
+    def test_get_pwd(self):
+        return
+
+    def test_get_username(self):
+        return

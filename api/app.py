@@ -1,14 +1,15 @@
 import urllib
 from flask import Flask
 from flask_restful import Api
-from database.db import initialize_db
-from resources.routes import initialize_resource
+from api.database.db import initialize_db
+from api.resources.routes import initialize_resource
+from api.common.utils import get_pwd, get_username
 
 app = Flask(__name__)
 api = Api(app)
 
-MONGODB_USERNAME = urllib.parse.quote_plus("mustufain")
-MONGODB_PWD = urllib.parse.quote_plus("mongo@!123")
+MONGODB_USERNAME = urllib.parse.quote_plus(get_username())
+MONGODB_PWD = urllib.parse.quote_plus(get_pwd())
 MONGODB_URI = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PWD}" \
               f"@news-scraper.a2rmv.mongodb.net/" \
               f"ary_news?retryWrites=true&w=majority"

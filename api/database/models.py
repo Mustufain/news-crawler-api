@@ -1,4 +1,4 @@
-from database.db import db
+from api.database.db import db
 
 
 class News(db.Document):
