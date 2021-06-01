@@ -2,13 +2,16 @@ import json
 from flask import Response, request
 from database.models import News
 from flask_restful import Resource
-from common.utils import get_paginated_list
+from common.utils import get_paginated_list, to_datetime
 
 
 class NewsApi(Resource):
 
     def get(self):
-        """HTTP GET METHOD"""
+        """
+        Get all news articles
+        :return: Response object
+        """
         # default behavior:
         # show 20 records
         # start with first record
@@ -27,14 +30,20 @@ class NewsApi(Resource):
         json_data = json.dumps(data, ensure_ascii=False, indent=4)
         return Response(json_data, mimetype="application/json", status=200)
 
-    def get(self, posted_date):
-        """HTTP GET METHOD TO GET NEWS ARTICLES FOR A PARTICULAR DATE"""
-        print(posted_date)
-        return
 
-    def get(self, keyword):
-        """HTTP GET METHOD TO GET NEWS ARTICLES WHERE KEYWRODS AcleaRE PRESENT"""
-        return
+class SearchNewsPostedDateApi(Resource):
+
+    def get(self, posted_date: str):
+        """
+        Get all news articles which are uploaded on the posted_date
+        :param posted_date: date when news article was posted
+        :type posted_date: str
+        :return: Response object
+        """
+        datetime = to_datetime(posted_date)
+        news = json.loads(News.objects(posted_date=datetime).to_json())
+        json_data = json.dumps(news, ensure_ascii=False, indent=4)
+        return Response(json_data, mimetype="application/json", status=200)
 
 
 # Api Improvements

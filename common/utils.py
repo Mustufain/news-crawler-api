@@ -1,4 +1,5 @@
 from flask import abort
+from datetime import datetime
 
 
 def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
@@ -26,3 +27,12 @@ def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
     links['count'] = count
     links['base'] = url
     return links
+
+
+def to_datetime(date: str):
+
+    try:
+        date = datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        abort(404)
+    return date
