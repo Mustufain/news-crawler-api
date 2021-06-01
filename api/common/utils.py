@@ -3,7 +3,7 @@ from flask import abort
 import boto3
 from botocore.exceptions import ClientError
 
-client = boto3.client('ssm')
+client = boto3.client('ssm', region_name='us-east-1')
 
 
 def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
