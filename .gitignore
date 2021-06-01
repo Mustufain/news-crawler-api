@@ -1,0 +1,7 @@
+.idea/
+.coverage
+*.pyc
+common/__pycache__
+database/__pycache__
+resources/__pycache__
+test/__pycache__
