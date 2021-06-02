@@ -23,4 +23,5 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 initialize_db(app)
 initialize_resource(api)
 
-app.run()
+if __name__ == '__main__':
+    app.run()

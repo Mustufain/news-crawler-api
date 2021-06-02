@@ -6,8 +6,8 @@ from botocore.exceptions import ClientError
 client = boto3.client('ssm', region_name='us-east-1')
 
 
-def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
-    if count < start or limit < 0:
+def get_paginated_list(count: int, start: int, limit: int, url: str) -> dict:
+    if count < start or limit < 0 or start < 0:
         abort(404)
     links = {}
     if start == 1:

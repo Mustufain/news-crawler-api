@@ -5,7 +5,7 @@ from werkzeug.exceptions import HTTPException
 from api.common.utils import get_paginated_list, to_datetime
 
 
-class Utils(unittest.TestCase):
+class TestUtils(unittest.TestCase):
 
     def setUp(self) -> None:
         self.endpoint = "/news?start={start}&limit={limit}"
