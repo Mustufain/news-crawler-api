@@ -1,17 +1,26 @@
 import unittest
 from datetime import datetime
 from nose.tools import raises
+import mock
 from werkzeug.exceptions import HTTPException
-from api.common.utils import get_paginated_list, to_datetime
+from api.common.utils import get_paginated_list, \
+    to_datetime, get_ssm_parameter
 
 
-class Utils(unittest.TestCase):
+class TestUtils(unittest.TestCase):
 
     def setUp(self) -> None:
         self.endpoint = "/news?start={start}&limit={limit}"
         self.url = "foo/news"
         self.date = '2020-01-01'
         self.invalid_date = '2021-02-29'
+        self.ssm_response = {
+            'Parameter':
+                {
+                    'Name': 'fooname',
+                    'Value': 'foovalue'
+                }
+        }
 
     @raises(HTTPException)
     def test_http_404_error(self):
@@ -62,8 +71,8 @@ class Utils(unittest.TestCase):
     def test_to_datetime_404_error(self):
         to_datetime(self.invalid_date)
 
-    def test_get_pwd(self):
-        return
-
-    def test_get_username(self):
-        return
+    @mock.patch('api.common.utils.ssm.get_parameter')
+    def test_ssm_parameter(self, mock_parameter):
+        mock_parameter.return_value = self.ssm_response
+        pwd = get_ssm_parameter('foo')
+        self.assertEqual(pwd, 'foovalue')

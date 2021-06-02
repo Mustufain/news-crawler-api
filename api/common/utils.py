@@ -3,11 +3,11 @@ from flask import abort
 import boto3
 from botocore.exceptions import ClientError
 
-client = boto3.client('ssm', region_name='us-east-1')
+ssm = boto3.client('ssm', region_name='us-east-1')
 
 
-def get_paginated_list(count: int, start: int, limit: int, url: str) -> object:
-    if count < start or limit < 0:
+def get_paginated_list(count: int, start: int, limit: int, url: str) -> dict:
+    if count < start or limit < 0 or start < 0:
         abort(404)
     links = {}
     if start == 1:
@@ -42,24 +42,14 @@ def to_datetime(date: str) -> datetime:
     return date
 
 
-def get_pwd() -> str:
+def get_ssm_parameter(name: str, with_decryption=False) -> str:
     try:
-        response = client.get_parameter(
-            Name='MONGODB_PWD',
-            WithDecryption=True)
-        pwd = response['Parameter']['Value']
+        response = ssm.get_parameter(
+            Name=name,
+            WithDecryption=with_decryption)
+        parameter = response['Parameter']['Value']
     except ClientError as error:
         print(error.response['Error']['Code'])
         raise
-    return pwd
+    return parameter
 
-
-def get_username() -> str:
-    try:
-        response = client.get_parameter(
-            Name='MONGODB_USERNAME')
-        username = response['Parameter']['Value']
-    except ClientError as error:
-        print(error.response['Error']['Code'])
-        raise
-    return username

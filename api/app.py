@@ -3,13 +3,15 @@ from flask import Flask
 from flask_restful import Api
 from api.database.db import initialize_db
 from api.resources.routes import initialize_resource
-from api.common.utils import get_pwd, get_username
+from api.common.utils import get_ssm_parameter
 
 app = Flask(__name__)
 api = Api(app)
 
-MONGODB_USERNAME = urllib.parse.quote_plus(get_username())
-MONGODB_PWD = urllib.parse.quote_plus(get_pwd())
+MONGODB_USERNAME = urllib.parse.quote_plus(
+    get_ssm_parameter('MONGODB_USERNAME'))
+MONGODB_PWD = urllib.parse.quote_plus(
+    get_ssm_parameter('MONGODB_PWD', with_decryption=True))
 MONGODB_URI = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PWD}" \
               f"@news-scraper.a2rmv.mongodb.net/" \
               f"ary_news?retryWrites=true&w=majority"
@@ -23,4 +25,5 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 initialize_db(app)
 initialize_resource(api)
 
-app.run()
+if __name__ == '__main__':
+    app.run()
